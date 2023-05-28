@@ -1,4 +1,4 @@
-package com.sankha.estore.ProductService.rest;
+package com.sankha.estore.ProductService.command;
 
 import lombok.Builder;
 import lombok.Data;

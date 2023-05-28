@@ -3,6 +3,22 @@ server:
 spring:
   application:
     name: product-service
+  datasource:
+    url: jdbc:h2:file:C:/Users/SANKHA/products;AUTO_SERVER=true
+    password: admin
+    username: root
+#    url: jdbc:mysql://localhost:3306/estore-cqrs
+#    password: admin
+#    username: root
+#    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
 eureka:
   client:
     service-url:
