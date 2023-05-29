@@ -1,6 +1,8 @@
 package com.sankha.estore.ProductService.command.interceptors;
 
 import com.sankha.estore.ProductService.command.CreateProductCommand;
+import com.sankha.estore.ProductService.core.data.ProductLookUpRepository;
+import com.sankha.estore.ProductService.core.data.ProductLookupEntity;
 import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.messaging.MessageDispatchInterceptor;
 import org.slf4j.Logger;
@@ -16,22 +18,34 @@ import java.util.function.BiFunction;
 public class CreateProductCommandInterceptor implements MessageDispatchInterceptor<CommandMessage<?>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CreateProductCommandInterceptor.class);
 
+   private ProductLookUpRepository productLookUpRepository;
+
+    public CreateProductCommandInterceptor(ProductLookUpRepository productLookUpRepository) {
+        this.productLookUpRepository = productLookUpRepository;
+    }
 
     @Nonnull
     @Override
     public BiFunction<Integer, CommandMessage<?>, CommandMessage<?>> handle(@Nonnull List<? extends CommandMessage<?>> list) {
         return (index,command)->{
             LOGGER.info("Intercepted command: " + command.getPayloadType());
-            CreateProductCommand createProductCommand= (CreateProductCommand) command.getPayload();
-            if(CreateProductCommand.class.equals((command.getPayload()))){
-                if(createProductCommand.getPrice().compareTo(BigDecimal.ZERO)<=0){
-                    throw new IllegalArgumentException("Price can not be negative or zero");
+
+            if(CreateProductCommand.class.equals(command.getPayloadType())) {
+
+                CreateProductCommand createProductCommand = (CreateProductCommand)command.getPayload();
+
+                ProductLookupEntity productLookupEntity =  productLookUpRepository.findByProductIdOrTitle(createProductCommand.getProductId(),
+                        createProductCommand.getTitle());
+
+                if(productLookupEntity != null) {
+                    throw new IllegalStateException(
+                            String.format("Product with productId %s or title %s already exist",
+                                    createProductCommand.getProductId(), createProductCommand.getTitle())
+                    );
                 }
-                if(createProductCommand.getTitle()==null
-                        ||createProductCommand.getTitle().isBlank()){
-                    throw new IllegalArgumentException("Title can not be empty");
-                }
+
             }
+
             return command;
         };
     }
