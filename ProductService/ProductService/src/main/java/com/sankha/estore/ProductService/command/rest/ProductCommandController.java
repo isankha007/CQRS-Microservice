@@ -1,6 +1,8 @@
 package com.sankha.estore.ProductService.command.rest;
 
 import com.sankha.estore.ProductService.command.CreateProductCommand;
+import com.sankha.estore.ProductService.command.CreateProductRestModel;
+import jakarta.validation.Valid;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -22,7 +24,7 @@ public class ProductCommandController {
     }
 
     @PostMapping
-    public String createProduct(@RequestBody CreateProductCommand createProductResrModel){
+    public String createProduct(@Valid @RequestBody CreateProductRestModel createProductResrModel){
         CreateProductCommand createProductCommand = CreateProductCommand.builder()
                 .price(createProductResrModel.getPrice())
                 .quantity(createProductResrModel.getQuantity())
