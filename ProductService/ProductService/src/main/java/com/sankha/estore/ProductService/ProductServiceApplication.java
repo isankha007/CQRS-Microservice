@@ -1,7 +1,9 @@
 package com.sankha.estore.ProductService;
 
 import com.sankha.estore.ProductService.command.interceptors.CreateProductCommandInterceptor;
+import com.sankha.estore.ProductService.core.errorhandling.ProductServiceEventErrorHandler;
 import org.axonframework.commandhandling.CommandBus;
+import org.axonframework.config.EventProcessingConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +23,12 @@ public class ProductServiceApplication {
 														CommandBus commandBus) {
 		commandBus.registerDispatchInterceptor(context.getBean(CreateProductCommandInterceptor.class));
 
+	}
+
+	@Autowired
+	public void configure(EventProcessingConfigurer eventProcessingConfigurer){
+		eventProcessingConfigurer.registerListenerInvocationErrorHandler("product-group",
+				configuration -> new ProductServiceEventErrorHandler());
 	}
 
 }

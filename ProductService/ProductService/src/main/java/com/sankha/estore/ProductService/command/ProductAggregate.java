@@ -23,7 +23,7 @@ public class ProductAggregate {
     }
 
     @CommandHandler
-    public ProductAggregate(CreateProductCommand createProductCommand) {
+    public ProductAggregate(CreateProductCommand createProductCommand)  {
         //validate create product command
         if(createProductCommand.getPrice().compareTo(BigDecimal.ZERO)<=0){
             throw new IllegalArgumentException("Price can not be negative or zero");
@@ -35,6 +35,8 @@ public class ProductAggregate {
         ProductCreateEvent productCreateEvent=new ProductCreateEvent();
         BeanUtils.copyProperties(createProductCommand,productCreateEvent);
         AggregateLifecycle.apply(productCreateEvent);
+
+        //
     }
     @EventSourcingHandler
     public void on(ProductCreateEvent productCreateEvent){
