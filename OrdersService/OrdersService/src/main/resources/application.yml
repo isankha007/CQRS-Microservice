@@ -1,0 +1,38 @@
+server:
+  port: 0
+  error:
+    include-message: always
+    include-binding-errors: always
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: jdbc:h2:file:C:/Users/SANKHA/orders;AUTO_SERVER=true
+    password: admin
+    username: root
+  #    url: jdbc:mysql://localhost:3306/estore-cqrs
+  #    password: admin
+  #    username: root
+  #    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${instanceId:${random.value}}
+
+axon:
+  eventhandling:
+    processors:
+      product-group:
+        mode: SUBSCRIBING
+  axonserver:
+    token: 123abc

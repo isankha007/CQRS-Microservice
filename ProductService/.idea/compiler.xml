@@ -7,9 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="ProductService" />
         <module name="DiscoveryServer" />
+        <module name="ProductService" />
         <module name="ApiGateway" />
+        <module name="OrdersService" />
       </profile>
     </annotationProcessing>
   </component>
@@ -17,6 +18,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ApiGateway" options="-parameters" />
       <module name="DiscoveryServer" options="-parameters" />
+      <module name="OrdersService" options="-parameters" />
       <module name="ProductService" options="-parameters" />
     </option>
   </component>
