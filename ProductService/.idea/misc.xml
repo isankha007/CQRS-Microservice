@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/../DiscoveryServer/DiscoveryServer/pom.xml" />
         <option value="$PROJECT_DIR$/../ApiGateway/ApiGateway/pom.xml" />
         <option value="$PROJECT_DIR$/../OrdersService/OrdersService/pom.xml" />
+        <option value="$PROJECT_DIR$/../core/core/pom.xml" />
       </list>
     </option>
   </component>

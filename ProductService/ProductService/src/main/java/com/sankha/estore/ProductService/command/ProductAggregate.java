@@ -1,6 +1,8 @@
 package com.sankha.estore.ProductService.command;
 
 import com.sankha.estore.ProductService.core.event.ProductCreateEvent;
+import com.sankha.estore.core.commands.ReserveProductCommand;
+import com.sankha.estore.core.events.ProductReservedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -38,6 +40,26 @@ public class ProductAggregate {
 
         //
     }
+
+    @CommandHandler
+    public void handle(ReserveProductCommand reserveProductCommand){
+        if(quantity< reserveProductCommand.getQuantity()){
+            throw new IllegalArgumentException("insufficient number of items");
+        }
+        ProductReservedEvent productReservedEvent=ProductReservedEvent.builder()
+                .orderId(reserveProductCommand.getOrderId())
+                .productId(reserveProductCommand.getProductId())
+                .quantity(reserveProductCommand.getQuantity())
+                .userId(reserveProductCommand.getUserId())
+                .build();
+        AggregateLifecycle.apply(productReservedEvent);
+
+    }
+    @EventSourcingHandler
+    public void on(ProductReservedEvent productReservedEvent){
+        this.quantity-= productReservedEvent.getQuantity();
+    }
+
     @EventSourcingHandler
     public void on(ProductCreateEvent productCreateEvent){
         this.productId=productCreateEvent.getProductId();
