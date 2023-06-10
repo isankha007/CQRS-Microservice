@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="core" />
         <module name="DiscoveryServer" />
+        <module name="UsersService" />
         <module name="ProductService" />
         <module name="ApiGateway" />
         <module name="OrdersService" />
@@ -21,6 +22,7 @@
       <module name="DiscoveryServer" options="-parameters" />
       <module name="OrdersService" options="-parameters" />
       <module name="ProductService" options="-parameters" />
+      <module name="UsersService" options="-parameters" />
       <module name="core" options="-parameters" />
     </option>
   </component>
