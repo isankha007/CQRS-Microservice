@@ -3,6 +3,7 @@ package com.sankkha.estore.OrdersService.saga;
 
 import com.sankha.estore.core.commands.ProcessPaymentCommand;
 import com.sankha.estore.core.commands.ReserveProductCommand;
+import com.sankha.estore.core.events.PaymentProcessedEvent;
 import com.sankha.estore.core.events.ProductReservedEvent;
 import com.sankha.estore.core.model.User;
 import com.sankha.estore.core.query.FetchUserPaymentDetailsQuery;
@@ -12,6 +13,7 @@ import org.axonframework.commandhandling.CommandMessage;
 import org.axonframework.commandhandling.CommandResultMessage;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
+import org.axonframework.modelling.saga.EndSaga;
 import org.axonframework.modelling.saga.SagaEventHandler;
 import org.axonframework.modelling.saga.StartSaga;
 import org.axonframework.queryhandling.QueryGateway;
@@ -21,7 +23,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nonnull;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Saga
 public class OrderSaga {
@@ -80,9 +84,40 @@ public class OrderSaga {
         LOGGER.info("Successfully fetched user payment details for user "+userPaymentDetails.getFirstName());
 
 
-        ProcessPaymentCommand processPaymentCommand=
+        ProcessPaymentCommand processPaymentCommand=ProcessPaymentCommand.builder()
+                .orderId(productReservedEvent.getOrderId())
+                .paymentDetails(userPaymentDetails.getPaymentDetails())
+                .paymentId(UUID.randomUUID().toString())
+                .build();
+
+        String result = null;
+        try {
+            result = commandGateway.sendAndWait(processPaymentCommand,10, TimeUnit.SECONDS);
+        } catch(Exception ex) {
+            LOGGER.error(ex.getMessage());
+            // Start compensating transaction
+           // cancelProductReservation(productReservedEvent,ex.getMessage());
+            return;
+        }
+
+        if(result == null) {
+            LOGGER.info("The ProcessPaymentCommand resulted in NULL. Initiating a compensating transaction");
+            // Start compensating transaction
+            //cancelProductReservation(productReservedEvent, "Could not proccess user payment with provided payment details");
+        }
     }
 
+    @SagaEventHandler(associationProperty="orderId")
+    public void handle(PaymentProcessedEvent paymentProcessedEvent) {
+
+       // cancelDeadline();
+
+        // Send an ApproveOrderCommand
+        //ApproveOrderCommand approveOrderCommand =
+               // new ApproveOrderCommand(paymentProcessedEvent.getOrderId());
+
+        //commandGateway.send(approveOrderCommand);
+    }
 
   /*  @StartSaga
     @SagaEventHandler(associationProperty = "orderId")

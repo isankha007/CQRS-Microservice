@@ -1,0 +1,9 @@
+server:
+  port: 0
+spring:
+  application:
+    name: payment-service
+  datasource:
+    url: jdbc:h2:file:C:/Users/SANKHA/payments;AUTO_SERVER=true
+    password: admin
+    username: root
